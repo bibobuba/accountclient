@@ -1,0 +1,26 @@
+server:
+  port: 8081
+
+management:
+  endpoints:
+    health:
+      show-details: always
+    web:
+      exposure:
+        include: health,env,info,prometheus
+
+client-service:
+  server-url: "http://localhost:8080"
+  amount-of-users-for-getting-process: 10000
+  amount-of-users-for-putting-process: 10000
+  list-of-ids:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
