@@ -11,7 +11,6 @@ import java.util.List;
 @Setter
 public class ClientConfiguration {
 
-    private String wayToDo;
     private int amountOfRequestsForGettingProcess;
     private int amountOfRequestsForPuttingProcess;
     private int amountOfThreads;
