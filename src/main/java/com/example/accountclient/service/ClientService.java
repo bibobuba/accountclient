@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -25,18 +27,6 @@ public class ClientService {
     private static AtomicLong counter = new AtomicLong(); //for understanding how many tasks are performed for precise moment
 
     public void startProcess() {
-
-        switch (configuration.getWayToDo()) {
-            case "executor":
-                startByExecutor();
-                break;
-            case "manually":
-                startManually();
-                break;
-        }
-    }
-
-    private void startByExecutor() {
 
         counter.set(0);
 
@@ -87,50 +77,6 @@ public class ClientService {
 
         executorService =
                 Executors.newFixedThreadPool(amountOfThreads);
-
-//        executorService =
-//                Executors.newWorkStealingPool(amountOfThreads);
-    }
-
-    private void startManually() {
-
-        counter.set(0);
-
-        int amountOfUsersForGettingProcess = configuration.getAmountOfRequestsForGettingProcess();
-        int amountOfUsersForPuttingProcess = configuration.getAmountOfRequestsForPuttingProcess();
-        List<Integer> listOfIds = configuration.getListOfIds();
-
-        final CyclicBarrier gate = new CyclicBarrier(amountOfUsersForGettingProcess
-                + amountOfUsersForPuttingProcess);
-
-        for (int i = 0; i < amountOfUsersForGettingProcess; i++) {
-            new Thread(() -> {
-                try {
-                    gate.await();
-                    Integer userId = listOfIds.get(random.nextInt(listOfIds.size()));
-                    Long result = feignClient.getValue(userId);
-                    log.info("Getting amount by manual thread execution for id=" + userId + " ; amount is: " + result
-                            + "; counter is: " + counter.incrementAndGet());
-                } catch (InterruptedException | BrokenBarrierException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-        }
-
-        for (int i = 0; i < amountOfUsersForPuttingProcess; i++) {
-            new Thread(() -> {
-                try {
-                    gate.await();
-                    Integer userId = listOfIds.get(random.nextInt(listOfIds.size()));
-                    Long amount = random.nextLong();
-                    feignClient.putValue(userId, amount);
-                    log.info("Putting amount by manual thread execution for id=" + userId + " ; amount is: " + amount
-                            + "; counter is: " + counter.incrementAndGet());
-                } catch (InterruptedException | BrokenBarrierException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-        }
     }
 
 }
