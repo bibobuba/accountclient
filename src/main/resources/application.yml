@@ -11,8 +11,10 @@ management:
 
 client-service:
   server-url: "http://localhost:8080"
-  amount-of-users-for-getting-process: 10000
-  amount-of-users-for-putting-process: 10000
+  way-to-do: executor #manually or executor
+  amount-of-requests-for-getting-process: 100 # amount of tasks for 'executor' case or amount of threads for 'manually' case
+  amount-of-requests-for-putting-process: 100 # amount of tasks for 'executor' case or amount of threads for 'manually' case
+  amount-of-threads: 100 #only for executor case
   list-of-ids:
     - 1
     - 2
